@@ -1,0 +1,28 @@
+version: "3"
+
+networks:
+        web:
+                external: true
+services:
+        caddy:
+                image: caddy:2-alpine
+                restart: unless-stopped
+                ports:
+                        - "80:80"
+                        - "443:443"
+                volumes:
+                        - /data/caddy/Caddyfile:/etc/caddy/Caddyfile
+                        - /data/caddy/data:/data
+                        - /data/caddy/config:/config
+                networks:
+                        - web
+        myghostblog:
+                image: ghost:3.22-alpine
+                restart: unless-stopped
+                environment:
+                        - url=https://techroads.org
+                volumes:
+                        - /data/ghostapp:/var/lib/ghost/content
+                        - /data/ghostapp/themes/post.hbs:/var/lib/ghost/content/themes/casper/post.hbs
+                networks:
+                        - web
